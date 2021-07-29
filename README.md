@@ -31,7 +31,6 @@ To deploy this plugin, you will need:
   twilio plugins:install @twilio-labs/plugin-flex
   ```
 - [Salesforce Developer](https://developer.salesforce.com/signup) or Sandbox Org. with System Administrator access
-- [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) with at least "Access and manage your data (api)" OAuth scope. The Callback URL will be configured later after the Twilio Function has been deployed. 
 
 ## Salesforce Connected App
 
