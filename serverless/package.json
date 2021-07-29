@@ -1,0 +1,22 @@
+{
+  "name": "functions-salesforce",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "twilio-run",
+    "deploy": "twilio-run deploy"
+  },
+  "dependencies": {
+    "google-libphonenumber": "^3.2.22",
+    "jsforce": "^1.10.1",
+    "twilio": "^3.56",
+    "twilio-flex-token-validator": "^1.5.6"
+  },
+  "devDependencies": {
+    "twilio-run": "^3.2.0"
+  },
+  "engines": {
+    "node": "12"
+  }
+}
