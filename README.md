@@ -34,7 +34,7 @@ To deploy this plugin, you will need:
 
 ## Salesforce Connected App
 
-Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) under Salesforce Setup > App Maanger > New Connected App with at least `Access and manage your data (api)` OAuth scope. The Callback URL will be configured later after the Twilio Function has been deployed. 
+Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) under Salesforce Setup > App Maanger > New Connected App with at least `Access and manage your data (api)` and `Perform requests on your behalf at any time (refresh_token, offline_access)` OAuth scope. The Callback URL will be configured later after the Twilio Function has been deployed. 
 
 <img width="840px" src="screenshots/salesforce-connected-app.png"/>
 
