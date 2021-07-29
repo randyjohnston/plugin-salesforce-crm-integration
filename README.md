@@ -10,16 +10,16 @@ This plugin leverages Twilio functions to faciliate the [OAuth authorization cod
 
 ## Screenshots
 
-<img width="700px" src="screenshots/flex-salesforce-unauthenticated.png"/>
+<img width="840px" src="screenshots/flex-salesforce-unauthenticated.png"/>
 
-<img width="700px" src="screenshots/flex-salesforce-authenticated.png"/>
+<img width="840px" src="screenshots/flex-salesforce-authenticated.png"/>
 
 ## Pre-requisites
 
 To deploy this plugin, you will need:
 
-- An active Twilio account with Flex provisioned. Refer to the [Flex Quickstart](https://www.twilio.com/docs/flex/quickstart/flex-basics#sign-up-for-or-sign-in-to-twilio-and-create-a-new-flex-project") to create one.
-- [SSO](https://www.twilio.com/docs/flex/admin-guide/setup/sso-configuration) configured for your Flex instance. This ensures that the Salesforce and Flex accounts can be linked securely using a common SSO identity provider. Flex users will not be able to login to Salesforce unless they are authenticated through SSO. 
+- An active Twilio account with Flex provisioned. Refer to the [Flex Quickstart](https://www.twilio.com/docs/flex/tutorials/setup) to create one.
+- [SSO](https://www.twilio.com/docs/flex/admin-guide/setup/sso-configuration) configured for your Flex instance. This ensures that the Salesforce and Flex accounts can be linked securely using a common SSO identity provider. Flex users will not be able to link Salesforce unless they are authenticated through SSO and users within the configured Salesforce Org. 
 - npm version 5.0.0 or later installed (type `npm -v` in your terminal to check)
 - Node.js version 12 or later installed (type `node -v` in your terminal to check)
 - [Twilio CLI](https://www.twilio.com/docs/twilio-cli/quickstart#install-twilio-cli) along with the [Flex CLI Plugin](https://www.twilio.com/docs/twilio-cli/plugins#available-plugins) and the [Serverless Plugin](https://www.twilio.com/docs/twilio-cli/plugins#available-plugins). Run the following commands to install them:
@@ -37,7 +37,7 @@ To deploy this plugin, you will need:
 
 Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) under Salesforce Setup > App Maanger > New Connected App with at least `Access and manage your data (api)` OAuth scope. The Callback URL will be configured later after the Twilio Function has been deployed. 
 
-<img width="700px" src="screenshots/salesforce-connected-app.png"/>
+<img width="840px" src="screenshots/salesforce-connected-app.png"/>
 
 ## Sync setup
 
@@ -45,7 +45,7 @@ Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=s
 ```bash
 twilio api:sync:v1:services:create --friendly-name Salesforce --acl-enabled
 ```
-<img width="700px" src="screenshots/sync-service.png"/>
+<img width="840px" src="screenshots/sync-service.png"/>
 
 2. Create a new [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Record the Sync Map SID:
 ```bash
@@ -57,7 +57,7 @@ twilio api:sync:v1:services:maps:create --service-sid ISXXXXXXXXXXXXXXXXXXXXXXXX
 1. Clone this repo:
 
   ```bash
-  https://github.com/randyjohnston/plugin-salesforce-crm-integration
+  git clone https://github.com/randyjohnston/plugin-salesforce-crm-integration
   ```
 
 2. Install the dependencies
