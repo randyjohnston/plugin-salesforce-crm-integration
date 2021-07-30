@@ -220,7 +220,7 @@ class SalesforceCrm extends React.Component {
           {!this.state.sfdcUserLoggedIn &&
             <Label>
               <a
-                href={this.state.custRecordUrl}
+                href={this.authUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >Click here to login
