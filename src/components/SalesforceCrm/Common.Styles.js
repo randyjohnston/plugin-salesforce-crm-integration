@@ -3,6 +3,7 @@ import styled from 'react-emotion';
 export const Label = styled('div')`
   color: ${(props) => props.theme.colors.base7};
   letter-spacing: 2px;
+  margin: 10px 12px 4px;
 `;
 
 export const Value = styled('div')`
@@ -10,7 +11,7 @@ export const Value = styled('div')`
 `;
 
 export const Header = styled('div')`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   font-style: normal;
   font-stretch: normal;

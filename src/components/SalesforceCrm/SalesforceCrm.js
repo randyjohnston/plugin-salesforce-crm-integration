@@ -5,6 +5,7 @@ import {
   CustomCRMContainer,
   ProfileCanvas,
   ProfileGrid,
+  LargeCaption
 } from './SalesforceCrm.Styles';
 
 class SalesforceCrm extends React.Component {
@@ -17,6 +18,7 @@ class SalesforceCrm extends React.Component {
       sfdcUserName: undefined,
       matchingSfdcRecord: undefined,
       custName: undefined,
+      custRecordUrl: undefined,
       custTitle: undefined,
       custAcctName: undefined,
       custAcctType: undefined,
@@ -91,6 +93,7 @@ class SalesforceCrm extends React.Component {
     this.setState({
       matchingSfdcRecord: true,
       custName: this.loadingText,
+      custRecordUrl: this.loadingText,
       custTitle: this.loadingText,
       custAcctName: this.loadingText,
       custAcctType: this.loadingText,
@@ -122,6 +125,7 @@ class SalesforceCrm extends React.Component {
         this.setState({
           matchingSfdcRecord: true,
           custName: data.cust_name,
+          custRecordUrl: data.cust_record_url,
           custTitle: data.cust_title,
           custAcctName: data.cust_acct_name,
           custAcctType: data.cust_acct_type,
@@ -157,45 +161,71 @@ class SalesforceCrm extends React.Component {
             : 'Unknown SFDC username'
           }
           </HeaderLine>
-          {task && task.attributes && task.attributes.name && this.state.matchingSfdcRecord && this.state.sfdcUserLoggedIn &&
-            <ProfileGrid>
-              <div>
-                <Label>Customer Phone Number</Label>
-                <Value>{task.attributes.name}</Value>
-              </div>
-              <div>
-                <Label>Customer Name</Label>
-                <Value>{this.state.custName}</Value>
-              </div>
-              <div>
-                <Label>Customer Title</Label>
-                <Value>{this.state.custTitle}</Value>
-              </div>
-              <div>
-                <Label>Customer Account Name</Label>
-                <Value>{this.state.custAcctName}</Value>
-              </div>
-              <div>
-                <Label>Customer Account Type</Label>
-                <Value>{this.state.custAcctType}</Value>
-              </div>
-              <div>
-                <Label>Customer Account Number</Label>
-                <Value>{this.state.custAcctNum}</Value>
-              </div>
-              <div>
-                <Label>Customer Account SLA</Label>
-                <Value>{this.state.custAcctSla}</Value>
-              </div>
-              <div>
-                <Label>Customer Account Priority</Label>
-                <Value>{this.state.custAcctPriority}</Value>
-              </div>
-            </ProfileGrid>
+          {task
+            && task.attributes
+            && task.attributes.name
+            && this.state.matchingSfdcRecord
+            && this.state.sfdcUserLoggedIn
+            &&
+            <>
+              <Label>
+                <a
+                  href={this.state.custRecordUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Salesforce Contact Record
+                </a>
+              </Label>
+              <ProfileGrid>
+                <div>
+                  <Label>Customer Phone Number</Label>
+                  <Value>{task.attributes.name}</Value>
+                </div>
+                <div>
+                  <Label>Customer Name</Label>
+                  <Value>{this.state.custName}</Value>
+                </div>
+                <div>
+                  <Label>Customer Title</Label>
+                  <Value>{this.state.custTitle}</Value>
+                </div>
+                <div>
+                  <Label>Customer Account Name</Label>
+                  <Value>{this.state.custAcctName}</Value>
+                </div>
+                <div>
+                  <Label>Customer Account Type</Label>
+                  <Value>{this.state.custAcctType}</Value>
+                </div>
+                <div>
+                  <Label>Customer Account Number</Label>
+                  <Value>{this.state.custAcctNum}</Value>
+                </div>
+                <div>
+                  <Label>Customer Account SLA</Label>
+                  <Value>{this.state.custAcctSla}</Value>
+                </div>
+                <div>
+                  <Label>Customer Account Priority</Label>
+                  <Value>{this.state.custAcctPriority}</Value>
+                </div>
+              </ProfileGrid>
+            </>
           }
-          {!this.state.matchingSfdcRecord && <Label>No matching SFDC contacts</Label>}
+          {!this.state.matchingSfdcRecord
+            &&
+            <Label>No matching SFDC contacts</Label>
+          }
           {!this.state.sfdcUserLoggedIn &&
-            <Label><a href={this.authUrl} target="_blank" rel="noopener noreferrer">Click here to login</a></Label>
+            <Label>
+              <a
+                href={this.state.custRecordUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >Click here to login
+              </a>
+            </Label>
           }
         </ProfileCanvas>
       </CustomCRMContainer>
