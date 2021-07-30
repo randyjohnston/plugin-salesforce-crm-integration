@@ -78,12 +78,12 @@ const oauthHelper = async (event, context, twilioClient) => {
 
 const sfdcQuery = async (event, connection, response, callback) => {
   // convert E164 phone number into different formats for query
-  const number = phoneUtil.parseAndKeepRawInput(event.phone,);
+  const number = phoneUtil.parseAndKeepRawInput(event.phone, event.country);
   const nationalNumber = String(number.getNationalNumber());
   const formattedNationalNumber = phoneUtil.format(number, PNF.NATIONAL);
   const trimmedFormattedNationalNumber = formattedNationalNumber.replace(/\s/g, '');
   const formattedInternatinoalNumber = phoneUtil.format(number, PNF.INTERNATIONAL);
-  const outOfCountryNumber = phoneUtil.formatOutOfCountryCallingNumber(number, 'US');
+  const outOfCountryNumber = phoneUtil.formatOutOfCountryCallingNumber(number, event.country);
   const formattingNumberOptions = [
     event.phone,
     nationalNumber,
