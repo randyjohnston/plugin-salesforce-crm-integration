@@ -10,8 +10,27 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   response.appendHeader('Access-Control-Allow-Methods', 'OPTIONS POST');
   response.appendHeader('Content-Type', 'application/json');
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
-  console.log(JSON.stringify(event.TokenResult));
 
+  console.log('Querying Sync & SFDC for Flex User: ', JSON.stringify(event.TokenResult));
+
+  const connection = await oauthHelper(event, context, twilioClient);
+
+  const identityInfo = await connection.identity(function (err, res) {
+    if (err) {
+      response.setBody('Authorization failed');
+      response.setStatusCode(403);
+      return callback(null, response);
+    }
+  });
+
+  console.log(`Retrieved SFDC identity ${identityInfo.username} 
+    for Flex user ${event.TokenResult.realm_user_id}`);
+  response.setBody({ 'sfdc_username': identityInfo.username });
+  return callback(null, response);
+
+});
+
+const oauthHelper = async (event, context, twilioClient) => {
   const syncMapItem = await twilioClient.sync.services(context.SYNC_SERVICE_SID)
     .syncMaps(context.SYNC_MAP_SID)
     .syncMapItems(event.TokenResult.realm_user_id)
@@ -20,7 +39,7 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   const oauth2 = new jsforce.OAuth2({
     clientId: context.SFDC_CLIENT_ID,
     clientSecret: context.SFDC_CLIENT_SECRET,
-    redirectUri: `https://${context.DOMAIN_NAME}/${context.REDIRECT_URI}`,
+    redirectUri: `https://${context.DOMAIN_NAME}/get-access-token`,
   });
 
   const connection = new jsforce.Connection(
@@ -32,16 +51,5 @@ exports.handler = TokenValidator(async function (context, event, callback) {
     }
   );
 
-  const identityInfo = await connection.identity(function (err, res) {
-    if (err) {
-      response.setBody('Authorization failed');
-      response.setStatusCode(403);
-      return callback(null, response);
-    }
-  });
-
-  response.setBody({ 'sfdc_username': identityInfo.username });
-  return callback(null, response);
-
-});
-
+  return connection;
+}

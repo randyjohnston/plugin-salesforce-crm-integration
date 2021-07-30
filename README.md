@@ -66,14 +66,14 @@ twilio api:sync:v1:services:maps:create --service-sid ISXXXXXXXXXXXXXXXXXXXXXXXX
   npm install
   
   # Install the dependencies of the Twilio Functions
-  cd functions
+  cd serverless
   npm install
   ```
 
-3. Copy the `.env.example` file in the `functions/` directory:
+3. Copy the `.env.example` file in the `serverless/` directory:
 
   ```bash
-  cp functions/.env.example functions/.env
+  cp serverless/.env.example serverless/.env
   ```
 
 4. Edit `.env`:
@@ -112,7 +112,7 @@ In order to develop locally, you can use the Webpack Dev Server by running (from
   twilio flex:plugins:start
   
   # Start Twilio Functions
-  cd functions && npm run start 
+  cd serverless && npm run start 
   ```
 
 This will automatically start up the Webpack Dev Server and open the browser for you. Your app will run on `http://localhost:3000`. If you want to change that you can do this by setting the `PORT` environment variable:

@@ -1,5 +1,4 @@
 exports.refreshToken = async (twilioClient, context, connection, response) => {
-
     const identityInfo = await connection.identity(function (err, res) {
         if (err) {
             response.setBody('Authorization failed');
@@ -19,6 +18,7 @@ exports.refreshToken = async (twilioClient, context, connection, response) => {
                     'refresh_token': connection.refreshToken
                 }
             });
+        console.log(`Created initial tokens for ${identityInfo.username}`);
     } catch (e) {
         console.error(e);
         if (e.status === 409 && e.code === 54208) {
@@ -33,11 +33,11 @@ exports.refreshToken = async (twilioClient, context, connection, response) => {
                         'refresh_token': connection.refreshToken
                     }
                 });
+            console.log(`Updated tokens for ${identityInfo.username}`);
         } else {
             response.setBody('Authorization failed');
             response.setStatusCode(403);
             return callback(null, response);
         }
     }
-
 }

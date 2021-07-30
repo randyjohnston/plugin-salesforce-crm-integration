@@ -14,6 +14,41 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   response.appendHeader('Content-Type', 'application/json');
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  let refreshedToken = false;
+  const connection = await oauthHelper(event, context, twilioClient);
+
+  connection.on("refresh", function (accessToken, res) {
+    refreshedToken = true;
+  });
+
+  const sfdcRecords = await sfdcQuery(event, connection, response, callback);
+
+  if (refreshedToken) {
+    await refreshToken.refreshToken(twilioClient, context, connection, response);
+  }
+
+  if (sfdcRecords.length !== 1) {
+    response.setBody('Could not find SFDC record');
+    response.setStatusCode(404);
+    return callback(null, response);
+  }
+
+  response.setBody(
+    {
+      'cust_name': sfdcRecords[0].Name,
+      'cust_title': sfdcRecords[0].Title,
+      'cust_acct_name': sfdcRecords[0].Account.Name,
+      'cust_acct_type': sfdcRecords[0].Account.Type,
+      'cust_acct_num': sfdcRecords[0].Account.AccountNumber,
+      'cust_acct_sla': sfdcRecords[0].Account.SLA__c,
+      'cust_acct_priority': sfdcRecords[0].Account.CustomerPriority__c,
+    }
+  );
+
+  return callback(null, response);
+});
+
+const oauthHelper = async (event, context, twilioClient) => {
   const syncMapItem = await twilioClient.sync.services(context.SYNC_SERVICE_SID)
     .syncMaps(context.SYNC_MAP_SID)
     .syncMapItems(event.TokenResult.realm_user_id)
@@ -33,33 +68,10 @@ exports.handler = TokenValidator(async function (context, event, callback) {
       refreshToken: syncMapItem.data.refresh_token
     }
   );
+  console.log(`Established SFDC query connection for ${event.TokenResult.realm_user_id}`);
 
-  let refreshedToken = false;
-  connection.on("refresh", function (accessToken, res) {
-    console.log('Refreshed new token: ', accessToken);
-    refreshedToken = true;
-  });
-
-  const sfdcRecord = await sfdcQuery(event, connection, response, callback);
-
-  if (refreshedToken) {
-    await refreshToken.refreshToken(twilioClient, context, connection, response);
-  }
-
-  response.setBody(
-    {
-      'cust_name': sfdcRecord.Name,
-      'cust_title': sfdcRecord.Title,
-      'cust_acct_name': sfdcRecord.Account.Name,
-      'cust_acct_type': sfdcRecord.Account.Type,
-      'cust_acct_num': sfdcRecord.Account.AccountNumber,
-      'cust_acct_sla': sfdcRecord.Account.SLA__c,
-      'cust_acct_priority': sfdcRecord.Account.CustomerPriority__c,
-    }
-  );
-
-  return callback(null, response);
-});
+  return connection;
+}
 
 const sfdcQuery = async (event, connection, response, callback) => {
   // convert E164 phone number into different formats for query
@@ -78,7 +90,7 @@ const sfdcQuery = async (event, connection, response, callback) => {
     outOfCountryNumber
   ];
 
-  let sfdcRecord;
+  let sfdcRecords;
   await connection.sobject("Contact")
     .find(
       // conditions in JSON object
@@ -102,17 +114,11 @@ const sfdcQuery = async (event, connection, response, callback) => {
         console.error(err);
         response.setStatusCode(400);
         return callback(null, response);
-      } else if (records && records.length === 0) {
-        response.setBody('Could not find SFDC record');
-        console.error(err);
-        response.setStatusCode(404);
-        return callback(null, response);
       } else if (records) {
-        console.log("Fetched: " + records.length);
-        sfdcRecord = records[0];
+        console.log("Fetched # SFDC records: " + records.length);
+        sfdcRecords = records;
       }
     });
 
-  return sfdcRecord;
-
+  return sfdcRecords;
 }
