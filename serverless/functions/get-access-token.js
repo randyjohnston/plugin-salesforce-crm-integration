@@ -16,7 +16,7 @@ exports.handler = async function (context, event, callback) {
   const oauth2 = new jsforce.OAuth2({
     clientId: context.SFDC_CLIENT_ID,
     clientSecret: context.SFDC_CLIENT_SECRET,
-    redirectUri: `https://${context.DOMAIN_NAME}/${context.REDIRECT_URI}`,
+    redirectUri: `https://${context.DOMAIN_NAME}/get-access-token`,
   })
 
   const connection = new jsforce.Connection({ oauth2: oauth2 });
