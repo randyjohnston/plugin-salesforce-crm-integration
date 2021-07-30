@@ -32,16 +32,19 @@ exports.handler = TokenValidator(async function (context, event, callback) {
     response.setStatusCode(404);
     return callback(null, response);
   }
+  const sfdcRecord = sfdcRecords[0];
 
   response.setBody(
     {
-      'cust_name': sfdcRecords[0].Name,
-      'cust_title': sfdcRecords[0].Title,
-      'cust_acct_name': sfdcRecords[0].Account.Name,
-      'cust_acct_type': sfdcRecords[0].Account.Type,
-      'cust_acct_num': sfdcRecords[0].Account.AccountNumber,
-      'cust_acct_sla': sfdcRecords[0].Account.SLA__c,
-      'cust_acct_priority': sfdcRecords[0].Account.CustomerPriority__c,
+      'cust_name': sfdcRecord.Name,
+      'cust_record_url':
+        `${process.env.SFDC_INSTANCE_URL}/lightning/r/Contact/${sfdcRecord.Id}/view`,
+      'cust_title': sfdcRecord.Title,
+      'cust_acct_name': sfdcRecord.Account.Name,
+      'cust_acct_type': sfdcRecord.Account.Type,
+      'cust_acct_num': sfdcRecord.Account.AccountNumber,
+      'cust_acct_sla': sfdcRecord.Account.SLA__c,
+      'cust_acct_priority': sfdcRecord.Account.CustomerPriority__c,
     }
   );
 
@@ -75,7 +78,7 @@ const oauthHelper = async (event, context, twilioClient) => {
 
 const sfdcQuery = async (event, connection, response, callback) => {
   // convert E164 phone number into different formats for query
-  const number = phoneUtil.parseAndKeepRawInput(event.phone, 'US');
+  const number = phoneUtil.parseAndKeepRawInput(event.phone,);
   const nationalNumber = String(number.getNationalNumber());
   const formattedNationalNumber = phoneUtil.format(number, PNF.NATIONAL);
   const trimmedFormattedNationalNumber = formattedNationalNumber.replace(/\s/g, '');
@@ -97,6 +100,7 @@ const sfdcQuery = async (event, connection, response, callback) => {
       { 'Phone': { $in: formattingNumberOptions } },
       // fields in JSON object
       {
+        Id: 1,
         Name: 1,
         Title: 1,
         'Account.Name': 1,
