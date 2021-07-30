@@ -10,7 +10,15 @@ This plugin leverages Twilio functions to faciliate the [OAuth authorization cod
 
 ## Screenshots
 
+### Before Salesfore OAuth access granted
+
+Agent is prompted to complete OAuth authorization code flow to delegate Salesforce access to Flex:
+
 <img width="840px" src="screenshots/flex-salesforce-unauthenticated.png"/>
+
+### After Salesforce OAuth access granted
+
+Flex UI renders matching Contact & Account data from Salesforce based on associated Task:
 
 <img width="840px" src="screenshots/flex-salesforce-authenticated.png"/>
 
