@@ -64,6 +64,7 @@ typings/
 appConfig.js
 pluginsService.js
 build/
+serverless/.twiliodeployinfo
 
 # DS_Store
 .DS_Store
