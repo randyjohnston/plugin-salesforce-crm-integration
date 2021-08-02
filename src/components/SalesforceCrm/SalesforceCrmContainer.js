@@ -80,14 +80,21 @@ class SalesforceCrmContainer extends React.Component {
   }
 
   getCrmData() {
-    const foundCachedRecord = this.props.sfdcRecords.find(
-      sfdcRecord => sfdcRecord.custPhone === this.props.task.attributes.name);
-    if (foundCachedRecord && foundCachedRecord.custName) {
+    let foundCachedRecord;
+    const cacheingEnabled = JSON.parse(
+      process.env.REACT_APP_REDUX_SFDC_CACHEING_ENABLED.toLowerCase()
+    );
+    if (cacheingEnabled) {
+      foundCachedRecord = this.props.sfdcRecords.find(
+        sfdcRecord => sfdcRecord.custPhone === this.props.task.attributes.name
+      );
+    }
+    if (cacheingEnabled && foundCachedRecord && foundCachedRecord.custName) {
       this.setState({
         matchingSfdcRecord: true,
         custRecord: foundCachedRecord
       })
-    } else if (foundCachedRecord && !foundCachedRecord.custName) {
+    } else if (cacheingEnabled && foundCachedRecord && !foundCachedRecord.custName) {
       this.setState({
         matchingSfdcRecord: false,
         custRecord: foundCachedRecord
