@@ -14,7 +14,7 @@
     "twilio-flex-token-validator": "^1.5.6"
   },
   "devDependencies": {
-    "twilio-run": "^3.2.0"
+    "twilio-run": "^3.2.2"
   },
   "engines": {
     "node": "12"
