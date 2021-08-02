@@ -25,17 +25,30 @@ export const ProfileGrid = styled('div')`
   row-gap: 20px;
 `;
 
-export const ProfilePhoto = styled('img')`
-  border-radius: 50%;
-  height: 200px;
-  width: 200px;
-  margin: 0 12px 34px;
+export const Label = styled('div')`
+  color: ${(props) => props.theme.colors.base7};
+  letter-spacing: 2px;
+  margin: 10px 12px 4px;
 `;
 
-export const LargeCaption = styled('div')`
-  font-size: 24px;
+export const Value = styled('div')`
+  color: ${(props) => props.theme.colors.base8};
+`;
+
+export const Header = styled('div')`
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-align: center;
-  margin: 10px 0 40px;
+  margin: 0px 12px 4px;
+`;
+
+export const HeaderLine = styled('div')`
+  border-style: solid;
+  border-width: 0px 0px 4px;
+  border-color: ${(props) => props.theme.colors.flexBlueColor};
+  margin: 0 0 20px;
 `;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { VERSION } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
-import SalesforceCrm from './components/SalesforceCrm/SalesforceCrm'
+import SalesforceCrmContainer from './components/SalesforceCrm/SalesforceCrmContainer'
 
 import reducers, { namespace } from './states';
 
@@ -26,7 +26,7 @@ export default class SalesforceCrmIntegrationPlugin extends FlexPlugin {
 
     const options = { sortOrder: -1 };
     flex.AgentDesktopView.Panel2.Content.add(
-      <SalesforceCrm key="salesforce" manager={manager} />,
+      <SalesforceCrmContainer key="salesforce" manager={manager} />,
       options
     );
   }
