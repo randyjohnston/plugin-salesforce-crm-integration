@@ -189,4 +189,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // Connect presentational component to Redux
-export default withTaskContext(connect(mapStateToProps, mapDispatchToProps)(withTaskContext(SalesforceCrmContainer)));
+export default connect(mapStateToProps, mapDispatchToProps)(withTaskContext(SalesforceCrmContainer));

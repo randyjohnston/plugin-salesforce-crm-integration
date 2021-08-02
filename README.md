@@ -4,9 +4,9 @@ This Flex plugin brings Salesforce Contact & Account data into the Flex UI using
 
 ## How it works
 
-This Flex plugin adds a Salesforce CRM data component to the second panel ([AgentDesktopView Panel2](https://assets.flex.twilio.com/docs/releases/flex-ui/1.21.0/Panel2.html)) in the Flex UI. It allows Flex agents to delegate OAuth access to Flex & Functions to query Salesforce Contacts & Accounts for the caller's phone number and displays key fields from the Salesforce Contact and Account record.
+This Flex plugin adds a Salesforce CRM data component to the second panel ([AgentDesktopView Panel2](https://assets.flex.twilio.com/docs/releases/flex-ui/1.21.0/Panel2.html)) in the Flex UI. It allows Flex agents to delegate OAuth access to Flex to query Salesforce Contacts & Accounts for the caller's phone number and displays key fields from the Salesforce Contact and Account record.
 
-This plugin leverages Twilio functions to faciliate the [OAuth authorization code flow](https://help.salesforce.com/articleView?id=sf.remoteaccess_oauth_flows.htm) and query Salesforce for User, Account, and Contact data using OAuth access & refresh tokens stored in a dedicated [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Once the agent has authenticated to their Salesforce user account, Flex will dynamically query and render the caller's Salesforce fields in the secondary panel in the agent desktop.
+This plugin leverages [Twilio Functions](https://www.twilio.com/docs/runtime/functions) to faciliate the [OAuth authorization code flow](https://help.salesforce.com/articleView?id=sf.remoteaccess_oauth_flows.htm) and query Salesforce for User, Account, and Contact data using OAuth access & refresh tokens stored in a dedicated [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Once the agent has authenticated to their Salesforce user account, Flex will dynamically query and render the caller's Salesforce fields in the secondary panel in the agent desktop.
 
 To reduce the number of API calls against Salesforce and Twilio Functions & Sync, up to 100 Salesforce Contacts' relevant fields will be stored in context of the task's phone number to allow for navigation between tasks and repeat callers without needing to re-query Salesforce. 
 
@@ -143,7 +143,7 @@ When you are ready to deploy your plugin, first deploy your Twilio Functions:
 twilio serverless:deploy
 ```
 
-*Note: Record the function URL with path ending in `/get-access-token`, as this will be configured in Salesforce as the OAuth Callback URL. 
+*Note: Record the Function URL with path ending in `/get-access-token`, as this will be configured in Salesforce as the OAuth Callback URL. 
 
 Then deploy your Flex Plugins
 
