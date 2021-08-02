@@ -9,7 +9,7 @@ import {
   HeaderLine
 } from './SalesforceCrm.Styles';
 
- class SalesforceCrm extends React.Component {
+class SalesforceCrm extends React.Component {
 
   render() {
     const { task } = this.props;
@@ -27,6 +27,7 @@ import {
             && task.attributes.name
             && this.props.matchingSfdcRecord
             && this.props.sfdcUserLoggedIn
+            && this.props.custRecord.custName
             &&
             <>
               <Label>

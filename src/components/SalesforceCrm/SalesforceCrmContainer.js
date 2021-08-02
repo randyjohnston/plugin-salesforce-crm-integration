@@ -1,6 +1,9 @@
 import React from 'react';
 import { withTaskContext } from '@twilio/flex-ui';
 import SalesforceCrm from './SalesforceCrm';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Actions } from '../../states/SalesforceCrmState';
 
 class SalesforceCrmContainer extends React.Component {
 
@@ -77,70 +80,90 @@ class SalesforceCrmContainer extends React.Component {
   }
 
   getCrmData() {
-    this.setState({
-      matchingSfdcRecord: true,
-      custRecord: {
-        custName: this.loadingText,
-        custRecordUrl: this.loadingText,
-        custTitle: this.loadingText,
-        custAcctName: this.loadingText,
-        custAcctType: this.loadingText,
-        custAcctNum: this.loadingText,
-        custAcctSla: this.loadingText,
-        custAcctPriority: this.loadingText
-      }
-    });
-    fetch(`https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/get-contact-account-data`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        phone: this.props.task.attributes.name,
-        Token: this.props.manager.user.token
+    const foundCachedRecord = this.props.sfdcRecords.find(
+      sfdcRecord => sfdcRecord.custPhone === this.props.task.attributes.name);
+    if (foundCachedRecord && foundCachedRecord.custName) {
+      this.setState({
+        matchingSfdcRecord: true,
+        custRecord: foundCachedRecord
       })
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          // throw an error if we received any error from the Function
-          console.error('CRM fetch failed, response:', response);
-          throw new Error('Failed to fetch from CRM');
+    } else if (foundCachedRecord && !foundCachedRecord.custName) {
+      this.setState({
+        matchingSfdcRecord: false,
+        custRecord: foundCachedRecord
+      })
+    }
+    else {
+      this.setState({
+        matchingSfdcRecord: true,
+        custRecord: {
+          custName: this.loadingText,
+          custRecordUrl: this.loadingText,
+          custTitle: this.loadingText,
+          custAcctName: this.loadingText,
+          custAcctType: this.loadingText,
+          custAcctNum: this.loadingText,
+          custAcctSla: this.loadingText,
+          custAcctPriority: this.loadingText
         }
-      })
-      .then((data) => {
-        // save fetched user state in component's state
-        this.setState({
-          matchingSfdcRecord: true,
-          custRecord: {
-            custName: data.cust_name,
-            custRecordUrl: data.cust_record_url,
-            custTitle: data.cust_title,
-            custAcctName: data.cust_acct_name,
-            custAcctType: data.cust_acct_type,
-            custAcctNum: data.cust_acct_num,
-            custAcctSla: data.cust_acct_sla,
-            custAcctPriority: data.cust_acct_priority
-          }
-        });
-      })
-      .catch((error) => {
-        // handle errors received from the Function or thrown during the fetch
-        console.error('CRM request failed', error);
-        this.setState({
-          matchingSfdcRecord: false,
-          custRecord: {
-            custName: null,
-            custTitle: null,
-            custAcctName: null,
-            custAcctType: null,
-            custAcctNum: null,
-            custAcctSla: null,
-            custAcctPriority: null,
-          }
-        });
       });
+      fetch(`https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/get-contact-account-data`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone: this.props.task.attributes.name,
+          Token: this.props.manager.user.token
+        })
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            // throw an error if we received any error from the Function
+            console.error('CRM fetch failed, response:', response);
+            throw new Error('Failed to fetch from CRM');
+          }
+        })
+        .then((data) => {
+          // save fetched user state in component's state
+          this.setState({
+            matchingSfdcRecord: true,
+            custRecord: {
+              custPhone: this.props.task.attributes.name,
+              custName: data.cust_name,
+              custRecordUrl: data.cust_record_url,
+              custTitle: data.cust_title,
+              custAcctName: data.cust_acct_name,
+              custAcctType: data.cust_acct_type,
+              custAcctNum: data.cust_acct_num,
+              custAcctSla: data.cust_acct_sla,
+              custAcctPriority: data.cust_acct_priority
+            }
+          });
+          this.props.addRecord(this.state.custRecord);
+        })
+        .catch((error) => {
+          // handle errors received from the Function or thrown during the fetch
+          console.error('CRM request failed', error);
+          this.setState({
+            matchingSfdcRecord: false,
+            custRecord: {
+              custPhone: this.props.task.attributes.name,
+              custName: null,
+              custRecordUrl: null,
+              custTitle: null,
+              custAcctName: null,
+              custAcctType: null,
+              custAcctNum: null,
+              custAcctSla: null,
+              custAcctPriority: null
+            }
+          });
+          this.props.addRecord(this.state.custRecord);
+        });
+    }
   }
 
   render() {
@@ -156,4 +179,14 @@ class SalesforceCrmContainer extends React.Component {
 
 }
 
-export default withTaskContext(SalesforceCrmContainer);
+// Define mapping functions
+const mapStateToProps = (state) => ({
+  sfdcRecords: state['salesforce-crm-salesforce-integration'].sfdcRecords,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  addRecord: bindActionCreators(Actions.addRecord, dispatch),
+});
+
+// Connect presentational component to Redux
+export default withTaskContext(connect(mapStateToProps, mapDispatchToProps)(withTaskContext(SalesforceCrmContainer)));

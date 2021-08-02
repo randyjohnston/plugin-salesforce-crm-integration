@@ -1,12 +1,20 @@
 # Flex Plugin for Salesforce CRM Integration
 
-Twilio Flex Plugins allow you to customize the appearance and behavior of [Twilio Flex](https://www.twilio.com/flex). If you want to learn more about the capabilities and how to use the API, check out our [Flex documentation](https://www.twilio.com/docs/flex).
+This Flex plugin brings Salesforce Contact & Account data into the Flex UI using OAuth-deleagated access to the Salesforce APIs by a Flex & Salesforce user.
 
 ## How it works
 
 This Flex plugin adds a Salesforce CRM data component to the second panel ([AgentDesktopView Panel2](https://assets.flex.twilio.com/docs/releases/flex-ui/1.21.0/Panel2.html)) in the Flex UI. It allows Flex agents to delegate OAuth access to Flex & Functions to query Salesforce Contacts & Accounts for the caller's phone number and displays key fields from the Salesforce Contact and Account record.
 
 This plugin leverages Twilio functions to faciliate the [OAuth authorization code flow](https://help.salesforce.com/articleView?id=sf.remoteaccess_oauth_flows.htm) and query Salesforce for User, Account, and Contact data using OAuth access & refresh tokens stored in a dedicated [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Once the agent has authenticated to their Salesforce user account, Flex will dynamically query and render the caller's Salesforce fields in the secondary panel in the agent desktop.
+
+To reduce the number of API calls against Salesforce and Twilio Functions & Sync, up to 100 Salesforce Contacts' relevant fields will be stored in context of the task's phone number to allow for navigation between tasks and repeat callers without needing to re-query Salesforce. 
+
+## Data Flow
+ 
+The following diagram depitcts the logical architecture of the plugin:
+
+<img width="840px" src="screenshots/flex-sfdc integration-data-flow.png"/>
 
 ## Screenshots
 
