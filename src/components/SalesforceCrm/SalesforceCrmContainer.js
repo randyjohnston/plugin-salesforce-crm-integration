@@ -121,6 +121,7 @@ class SalesforceCrmContainer extends React.Component {
         },
         body: JSON.stringify({
           phone: this.props.task.attributes.name,
+          country: this.props.task.attributes.caller_country,
           Token: this.props.manager.user.token
         })
       })
