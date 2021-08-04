@@ -6,7 +6,8 @@ import {
   Label,
   Value,
   Header,
-  HeaderLine
+  HeaderLine,
+  RefreshButton
 } from './SalesforceCrm.Styles';
 
 class SalesforceCrm extends React.Component {
@@ -76,18 +77,30 @@ class SalesforceCrm extends React.Component {
             </>
           }
           {!this.props.matchingSfdcRecord
+            && this.props.sfdcUserLoggedIn
             &&
             <Label>No matching SFDC contacts</Label>
           }
-          {!this.props.sfdcUserLoggedIn &&
+          {!this.props.sfdcUserLoggedIn
+            && this.props.sfdcUserName !== this.props.loadingText
+            &&
             <Label>
               <a
                 href={this.props.authUrl}
+                onClick={this.props.setUserLoggingIn}
                 target="_blank"
                 rel="noopener noreferrer"
-              >Click here to login
+              >Click here to link your Salesforce account to Flex
               </a>
             </Label>
+          }
+          {(typeof this.props.sfdcUserLoggedIn == 'undefined')
+            && this.props.sfdcUserName !== this.props.loadingText
+            &&
+            <RefreshButton
+              onClick={this.props.refreshSalesforceLogin}>
+              Refresh
+            </RefreshButton>
           }
         </ProfileCanvas>
       </CustomCRMContainer>

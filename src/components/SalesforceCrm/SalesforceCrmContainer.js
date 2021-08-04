@@ -12,33 +12,32 @@ class SalesforceCrmContainer extends React.Component {
     this.authUrl = `https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/auth`;
     this.loadingText = 'Loading...';
     this.state = {
-      sfdcUserLoggedIn: false,
+      sfdcUserLoggedIn: undefined,
       sfdcUserName: undefined,
       matchingSfdcRecord: false,
       custRecord: {},
     };
     this.getCrmUser = this.getCrmUser.bind(this);
+    this.getCrmData = this.getCrmData.bind(this);
+    this.setUserLoggingIn = this.setUserLoggingIn.bind(this);
+    this.refreshSalesforceLogin = this.refreshSalesforceLogin.bind(this);
   }
 
   componentDidMount() {
     this.getCrmUser();
-    if (this.props.task && this.props.task.attributes) {
-      this.getCrmData();
-    }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (
-      this.props.task !== prevProps.task
-      && this.props.task
-      && this.props.task.attributes
+      (this.props.task !== prevProps.task || this.state.sfdcUserLoggedIn != prevState.sfdcUserLoggedIn)
+      && this.props.task?.attributes?.name
       && this.state.sfdcUserLoggedIn
     ) {
       this.getCrmData();
     }
   }
 
-  // retrieve data using the Twilio function as a proxy
+  // retrieve data using the Twilio Function as a proxy
   getCrmUser() {
     this.setState({
       sfdcUserName: this.loadingText,
@@ -72,8 +71,8 @@ class SalesforceCrmContainer extends React.Component {
         // handle errors received from the Function or thrown during the fetch
         console.error('CRM request failed', error);
         this.setState({
-          sfdcUserName: `No matching Salesforce authorization 
-            (please login to Salesforce & refresh Flex)`,
+          sfdcUserName: `No Salesforce authorization 
+            (please login to Salesforce below)`,
           sfdcUserLoggedIn: false
         });
       });
@@ -174,14 +173,27 @@ class SalesforceCrmContainer extends React.Component {
     }
   }
 
+  setUserLoggingIn() {
+    this.setState({
+      sfdcUserLoggedIn: undefined
+    });
+  }
+
+  refreshSalesforceLogin() {
+    this.getCrmUser();
+  }
+
   render() {
     return <SalesforceCrm
       sfdcUserLoggedIn={this.state.sfdcUserLoggedIn}
+      setUserLoggingIn={this.setUserLoggingIn}
+      refreshSalesforceLogin={this.refreshSalesforceLogin}
       sfdcUserName={this.state.sfdcUserName}
       matchingSfdcRecord={this.state.matchingSfdcRecord}
       custRecord={this.state.custRecord}
       authUrl={this.authUrl}
       task={this.props.task}
+      loadingText={this.loadingText}
     />
   }
 
