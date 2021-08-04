@@ -76,18 +76,27 @@ class SalesforceCrm extends React.Component {
             </>
           }
           {!this.props.matchingSfdcRecord
+            && this.props.sfdcUserLoggedIn 
             &&
             <Label>No matching SFDC contacts</Label>
           }
           {!this.props.sfdcUserLoggedIn &&
+            this.props.sfdcUserName !== this.props.loadingText &&
             <Label>
               <a
                 href={this.props.authUrl}
+                onClick={this.props.setUserLoggingIn}
                 target="_blank"
                 rel="noopener noreferrer"
-              >Click here to login
+              >Click here to link your Salesforce account to Flex
               </a>
             </Label>
+          }
+          {(typeof this.props.sfdcUserLoggedIn == 'undefined') &&
+            this.props.sfdcUserName !== this.props.loadingText &&
+            <button onClick={this.props.refreshSalesforceLogin}>
+              Refresh to see your authorized Salesforce account
+            </button>
           }
         </ProfileCanvas>
       </CustomCRMContainer>
