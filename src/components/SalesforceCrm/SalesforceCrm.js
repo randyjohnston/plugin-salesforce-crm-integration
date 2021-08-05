@@ -9,6 +9,7 @@ import {
   HeaderLine,
   RefreshButton
 } from './SalesforceCrm.Styles';
+import Popup from '../Oauth/Popup';
 
 class SalesforceCrm extends React.Component {
 
@@ -82,25 +83,14 @@ class SalesforceCrm extends React.Component {
             <Label>No matching SFDC contacts</Label>
           }
           {!this.props.sfdcUserLoggedIn
-            && this.props.sfdcUserName !== this.props.loadingText
+            && !(typeof this.props.sfdcUserLoggedIn == 'undefined')
             &&
-            <Label>
-              <a
-                href={this.props.authUrl}
-                onClick={this.props.setUserLoggingIn}
-                target="_blank"
-                rel="noopener noreferrer"
-              >Click here to link your Salesforce account to Flex
-              </a>
-            </Label>
-          }
-          {(typeof this.props.sfdcUserLoggedIn == 'undefined')
-            && this.props.sfdcUserName !== this.props.loadingText
-            &&
-            <RefreshButton
-              onClick={this.props.refreshSalesforceLogin}>
-              Refresh
-            </RefreshButton>
+            <Popup
+              url={this.props.authUrl}
+              onClose={this.props.refreshSalesforceLogin}
+              width={500}
+              height={700}
+            >Login</Popup>
           }
         </ProfileCanvas>
       </CustomCRMContainer>
