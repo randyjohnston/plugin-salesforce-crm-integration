@@ -48,7 +48,7 @@ exports.handler = async function (context, event, callback) {
 
   await refreshToken.refreshToken(twilioClient, context, connection, response);
 
-  response.setBody(`Successfully linked Flex to Salesforce for ${identityInfo.username}.`);
+  response.setBody(`Successfully linked Flex to Salesforce for ${identityInfo.username}. Please close this window.`);
   return callback(null, response);
 
 };
