@@ -22,7 +22,7 @@ exports.handler = async function (context, event, callback) {
   const connection = new jsforce.Connection({ oauth2: oauth2 });
 
   // Exchange authorization code for access token & refresh token; check for valid SFDC Org. ID
-  const userInfo = await connection.authorize(event.code, function (err, userInfo) {
+  await connection.authorize(event.code, function (err, userInfo) {
     if (err) {
       console.log('User unauthorized or OAuth error');
       response.setBody('Authorization failed');
@@ -38,7 +38,7 @@ exports.handler = async function (context, event, callback) {
   });
 
   // Get user identity for access token
-  const identityInfo = await connection.identity(function (err, res) {
+  const identityInfo = await connection.identity(function (err) {
     if (err) {
       response.setBody('Authorization failed');
       response.setStatusCode(403);
