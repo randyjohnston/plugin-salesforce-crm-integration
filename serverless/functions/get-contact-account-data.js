@@ -52,9 +52,8 @@ exports.handler = TokenValidator(async function (context, event, callback) {
 });
 
 const oauthHelper = async (event, context, twilioClient) => {
-  const syncMapItem = await twilioClient.sync.services(context.SYNC_SERVICE_SID)
-    .syncMaps(context.SYNC_MAP_SID)
-    .syncMapItems(event.TokenResult.realm_user_id)
+  const syncDoc = await twilioClient.sync.services(context.SYNC_SERVICE_SID)
+    .documents(event.TokenResult.realm_user_id)
     .fetch();
 
   const oauth2 = new jsforce.OAuth2({
@@ -67,8 +66,8 @@ const oauthHelper = async (event, context, twilioClient) => {
     {
       oauth2: oauth2,
       instanceUrl: context.SFDC_INSTANCE_URL,
-      accessToken: syncMapItem.data.access_token,
-      refreshToken: syncMapItem.data.refresh_token
+      accessToken: syncDoc.data.access_token,
+      refreshToken: syncDoc.data.refresh_token
     }
   );
   console.log(`Established SFDC query connection for ${event.TokenResult.realm_user_id}`);

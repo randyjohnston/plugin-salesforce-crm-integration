@@ -1,5 +1,5 @@
 exports.refreshToken = async (twilioClient, context, connection, response) => {
-    const identityInfo = await connection.identity(function (err, res) {
+    const identityInfo = await connection.identity(function (err) {
         if (err) {
             response.setBody('Authorization failed');
             response.setStatusCode(403);
@@ -8,33 +8,35 @@ exports.refreshToken = async (twilioClient, context, connection, response) => {
     });
 
     try {
-        await twilioClient.sync
+        const createdDocument = await twilioClient.sync
             .services(context.SYNC_SERVICE_SID)
-            .syncMaps(context.SYNC_MAP_SID)
-            .syncMapItems.create({
-                key: identityInfo.username, data:
+            .documents
+            .create(
                 {
-                    'access_token': connection.accessToken,
-                    'refresh_token': connection.refreshToken
-                }
-            });
-        console.log(`Created initial tokens for ${identityInfo.username}`);
-        return identityInfo;
-    } catch (e) {
-        console.error(e);
-        if (e.status === 409 && e.code === 54208) {
-            await twilioClient.sync
-                .services(context.SYNC_SERVICE_SID)
-                .syncMaps(context.SYNC_MAP_SID)
-                .syncMapItems(identityInfo.username)
-                .update({
-                    data:
-                    {
+                    uniqueName: identityInfo.username,
+                    data: {
                         'access_token': connection.accessToken,
                         'refresh_token': connection.refreshToken
                     }
-                });
-            console.log(`Updated tokens for ${identityInfo.username}`);
+                }
+            );
+        console.log(`Created initial tokens for ${identityInfo.username} in Doc SID ${createdDocument.sid}`);
+        return identityInfo;
+    } catch (e) {
+        console.error(e);
+        if (e.status === 409 && e.code === 54301) {
+            const updatedDocument = await twilioClient.sync
+                .services(context.SYNC_SERVICE_SID)
+                .documents(identityInfo.username)
+                .update(
+                    {
+                        data: {
+                            'access_token': connection.accessToken,
+                            'refresh_token': connection.refreshToken
+                        }
+                    }
+                );
+            console.log(`Updated tokens for ${identityInfo.username} in Doc SID ${updatedDocument.sid}`);
             return identityInfo;
         } else {
             response.setBody('Authorization failed');
