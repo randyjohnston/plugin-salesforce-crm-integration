@@ -6,7 +6,7 @@ This Flex plugin brings Salesforce Contact & Account data into the Flex UI using
 
 This Flex plugin adds a Salesforce CRM data component to the second panel ([AgentDesktopView Panel2](https://assets.flex.twilio.com/docs/releases/flex-ui/1.21.0/Panel2.html)) in the Flex UI. It allows Flex agents to delegate OAuth access to Flex to query Salesforce Contacts & Accounts for the caller's phone number and displays key fields from the Salesforce Contact and Account record.
 
-This plugin leverages [Twilio Functions](https://www.twilio.com/docs/runtime/functions) to faciliate the [OAuth authorization code flow](https://help.salesforce.com/articleView?id=sf.remoteaccess_oauth_flows.htm) and query Salesforce for User, Account, and Contact data using OAuth access & refresh tokens stored in a dedicated [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Once the agent has authenticated to their Salesforce user account, Flex will dynamically query and render the caller's Salesforce fields in the secondary panel in the agent desktop.
+This plugin leverages [Twilio Functions](https://www.twilio.com/docs/runtime/functions) to faciliate the [OAuth authorization code flow](https://help.salesforce.com/articleView?id=sf.remoteaccess_oauth_flows.htm) and query Salesforce for User, Account, and Contact data using OAuth access & refresh tokens stored in a separate [Sync Document](https://www.twilio.com/docs/sync/api/document-resource) for each user. Once the agent has authenticated to their Salesforce user account, Flex will dynamically query and render the caller's Salesforce fields in the secondary panel in the agent desktop.
 
 To reduce the number of API calls against Salesforce and Twilio Functions & Sync, up to 100 Salesforce Contacts' relevant fields will be stored in context of the task's phone number to allow for navigation between tasks and repeat callers without needing to re-query Salesforce. 
 
@@ -14,7 +14,7 @@ To reduce the number of API calls against Salesforce and Twilio Functions & Sync
  
 The following diagram depitcts the logical architecture of the plugin:
 
-<img width="840px" src="resources/flex-sfdc integration-data-flow.png"/>
+<img width="840px" src="resources/flex-sfdc-integration-data-flow.png"/>
 
 ## Screencast demo 
 
@@ -48,16 +48,11 @@ Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=s
 
 ## Sync setup
 
-1. Create a new [Sync Service](https://www.twilio.com/docs/sync/api/service#create-a-service-resource). Record the Sync Service SID. **Note**: Do **NOT** use the Default Flex Sync Service. Ensure that "ACL enabled" is true: 
+Create a new [Sync Service](https://www.twilio.com/docs/sync/api/service#create-a-service-resource). Record the Sync Service SID. **Note**: Do **NOT** use the Default Flex Sync Service. Ensure that "ACL enabled" is true: 
 ```bash
 twilio api:sync:v1:services:create --friendly-name Salesforce --acl-enabled
 ```
 <img width="840px" src="resources/sync-service.png"/>
-
-2. Create a new [Sync Map](https://www.twilio.com/docs/sync/api/map-resource). Record the Sync Map SID:
-```bash
-twilio api:sync:v1:services:maps:create --service-sid ISXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --unique-name "Salesforce tokens"
-```
 
 ## Functions & Flex Plugin Setup
 
@@ -87,14 +82,13 @@ twilio api:sync:v1:services:maps:create --service-sid ISXXXXXXXXXXXXXXXXXXXXXXXX
 4. Edit `.env`:
 
   ```bash
-    ACCOUNT_SID= Found at https://www.twilio.com/console
-    AUTH_TOKEN= Found at https://www.twilio.com/console 
-    SYNC_SERVICE_SID= Created above during Sync Setup
-    SYNC_MAP_SID= Created above during Sync Setup
-    SFDC_INSTANCE_URL= Your Salesforce instance URL, e.g. https://abc-dev-ed.my.salesforce.com
-    SFDC_ORG_ID= Your 18-character Salesforce Organization ID (e.g. 00A1a000001AaAaAAA)
-    SFDC_CLIENT_ID= Your Salesforce Connected App OAuth Client ID
-    SFDC_CLIENT_SECRET= Your Salesforce Connected App OAuth Client Secret
+    ACCOUNT_SID=Found at https://www.twilio.com/console
+    AUTH_TOKEN=Found at https://www.twilio.com/console 
+    SYNC_SERVICE_SID=Created above during Sync Setup
+    SFDC_INSTANCE_URL=Your Salesforce instance URL, e.g. https://abc-dev-ed.my.salesforce.com
+    SFDC_ORG_ID=Your 18-character Salesforce Organization ID (e.g. 00A1a000001AaAaAAA)
+    SFDC_CLIENT_ID=Your Salesforce Connected App OAuth Client ID
+    SFDC_CLIENT_SECRET=Your Salesforce Connected App OAuth Client Secret
   ```
 
 5. Copy the `.env.example` file in the root directory:
@@ -152,4 +146,4 @@ Once your Twilio Functions have deployed, configure the Salesforce Callback URL 
 
 ## Limitations and Scaling the Plugin
 
-Flex Sync has an Object Reads [rate limit](https://www.twilio.com/docs/sync/limits#sync-activity-limits) of 20 reads/sec/object with a burst rate of up to 200 reads/sec/object once within a 10 second window. For Flex deployments with more than 100 users, it is possible that this rate limit is hit during high activitity. Although client-side cacheing of the most recently selected Tasks' Salesforce records mitigates this partially, it is recommended to use an [OLTP database](https://insights.stackoverflow.com/survey/2021#section-most-loved-dreaded-and-wanted-databases) or [create multiple Sync Maps](https://www.twilio.com/docs/sync/best-practices-use-cases#distribute-data-among-multiple-sync-objects).
+Flex Sync has an Object Reads [rate limit](https://www.twilio.com/docs/sync/limits#sync-activity-limits) of 20 reads/sec/object with a burst rate of up to 200 reads/sec/object once within a 10 second window. Furthermore, a single Twilio account may only have up to 30 concurrent Functions invocations. Although client-side cacheing of the most recently selected Tasks' Salesforce records mitigates the risk that either of these rate limits is hit, it is recommended to use your own servers or cloud execution environment and an [OLTP database](https://insights.stackoverflow.com/survey/2021#section-most-loved-dreaded-and-wanted-databases)for integrating with Salesforce storing Salesforce user access & refresh tokens in large-scale Flex deployments. 
