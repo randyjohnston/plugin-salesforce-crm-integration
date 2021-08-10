@@ -19,6 +19,7 @@ exports.refreshToken = async (twilioClient, context, connection, response) => {
                 }
             });
         console.log(`Created initial tokens for ${identityInfo.username}`);
+        return identityInfo;
     } catch (e) {
         console.error(e);
         if (e.status === 409 && e.code === 54208) {
@@ -34,6 +35,7 @@ exports.refreshToken = async (twilioClient, context, connection, response) => {
                     }
                 });
             console.log(`Updated tokens for ${identityInfo.username}`);
+            return identityInfo;
         } else {
             response.setBody('Authorization failed');
             response.setStatusCode(403);

@@ -3,7 +3,7 @@ const jsforce = require('jsforce');
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 let refreshTokenPath = Runtime.getFunctions()['refresh-token'].path;
-let refreshToken = require(refreshTokenPath);
+let refreshToken = require(refreshTokenPath).refreshToken;
 
 exports.handler = TokenValidator(async function (context, event, callback) {
   const twilioClient = context.getTwilioClient();
@@ -24,7 +24,7 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   const sfdcRecords = await sfdcQuery(event, connection, response, callback);
 
   if (refreshedToken) {
-    await refreshToken.refreshToken(twilioClient, context, connection, response);
+    await refreshToken(twilioClient, context, connection, response);
   }
 
   if (sfdcRecords.length !== 1) {
@@ -93,36 +93,46 @@ const sfdcQuery = async (event, connection, response, callback) => {
     outOfCountryNumber
   ];
 
-  let sfdcRecords;
-  await connection.sobject("Contact")
-    .find(
-      // conditions in JSON object
-      { 'Phone': { $in: formattingNumberOptions } },
-      // fields in JSON object
-      {
-        Id: 1,
-        Name: 1,
-        Title: 1,
-        'Account.Name': 1,
-        'Account.Type': 1,
-        'Account.AccountNumber': 1,
-        'Account.SLA__c': 1,
-        'Account.CustomerPriority__c': 1
-      }
-    )
-    .sort({ LastModifiedDate: -1 })
-    .limit(1)
-    .execute(function (err, records) {
-      if (err) {
-        response.setBody('Encountered query error');
-        console.error(err);
-        response.setStatusCode(400);
-        return callback(null, response);
-      } else if (records) {
-        console.log("Fetched # SFDC records: " + records.length);
-        sfdcRecords = records;
-      }
-    });
-
-  return sfdcRecords;
+  try {
+    const sfdcRecords = await connection.sobject("Contact")
+      .find(
+        {
+          $or:
+            [
+              {
+                'Phone':
+                {
+                  $in: formattingNumberOptions
+                }
+              },
+              {
+                'MobilePhone':
+                {
+                  $in: formattingNumberOptions
+                }
+              },
+            ]
+        },
+        {
+          Id: 1,
+          Name: 1,
+          Title: 1,
+          'Account.Name': 1,
+          'Account.Type': 1,
+          'Account.AccountNumber': 1,
+          'Account.SLA__c': 1,
+          'Account.CustomerPriority__c': 1
+        }
+      )
+      .sort({ LastModifiedDate: -1 })
+      .limit(1)
+      .execute();
+    console.log("Fetched # SFDC records: " + sfdcRecords.length);
+    return sfdcRecords;
+  } catch (err) {
+    response.setBody('Encountered query error');
+    console.error(err);
+    response.setStatusCode(400);
+    return callback(null, response);
+  }
 }

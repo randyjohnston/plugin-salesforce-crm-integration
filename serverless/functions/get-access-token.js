@@ -1,7 +1,7 @@
 const jsforce = require('jsforce');
 
 const refreshTokenPath = Runtime.getFunctions()['refresh-token'].path;
-const refreshToken = require(refreshTokenPath);
+const refreshToken = require(refreshTokenPath).refreshToken;
 
 exports.handler = async function (context, event, callback) {
 
@@ -32,8 +32,7 @@ exports.handler = async function (context, event, callback) {
     }
     console.log('User authorized from org. ', userInfo.organizationId);
     // Get user identity for access token
-    const identityInfo = await connection.identity();
-    await refreshToken.refreshToken(twilioClient, context, connection, response);
+    const identityInfo = await refreshToken(twilioClient, context, connection, response);
     response.setBody(`Successfully linked Flex to Salesforce for ${identityInfo.username}. Please close this window.`);
     return callback(null, response);
   } catch (err) {
