@@ -1,5 +1,5 @@
 import React from 'react';
-import { VERSION } from '@twilio/flex-ui';
+import { VERSION, SideLink, Actions } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
 import SalesforceCrmContainer from './components/SalesforceCrm/SalesforceCrmContainer'
 
@@ -24,10 +24,12 @@ export default class SalesforceCrmIntegrationPlugin extends FlexPlugin {
 
     flex.AgentDesktopView.Panel2.Content.remove('container');
 
-    const options = { sortOrder: -1 };
     flex.AgentDesktopView.Panel2.Content.add(
-      <SalesforceCrmContainer key="salesforce" manager={manager} />,
-      options
+      <SalesforceCrmContainer key="salesforce" manager={manager} />
+    );
+
+    flex.ViewCollection.Content.add(
+      <flex.View name="salesforce-oauth" key="salesforce-oauth" />
     );
   }
 
