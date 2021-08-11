@@ -17,8 +17,6 @@ class SalesforceCrmContainer extends React.Component {
       matchingSfdcRecord: false,
       custRecord: {},
     };
-    this.getCrmUser = this.getCrmUser.bind(this);
-    this.getCrmData = this.getCrmData.bind(this);
     this.setUserLoggingIn = this.setUserLoggingIn.bind(this);
     this.refreshSalesforceLogin = this.refreshSalesforceLogin.bind(this);
   }
@@ -186,6 +184,7 @@ class SalesforceCrmContainer extends React.Component {
 
   render() {
     return <SalesforceCrm
+      manager={this.props.manager}
       sfdcUserLoggedIn={this.state.sfdcUserLoggedIn}
       setUserLoggingIn={this.setUserLoggingIn}
       refreshSalesforceLogin={this.refreshSalesforceLogin}

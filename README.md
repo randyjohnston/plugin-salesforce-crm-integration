@@ -28,6 +28,7 @@ To deploy this plugin, you will need:
 
 - An active Twilio account with Flex provisioned. Refer to the [Flex Quickstart](https://www.twilio.com/docs/flex/tutorials/setup) to create one.
 - [SSO](https://www.twilio.com/docs/flex/admin-guide/setup/sso-configuration) configured for your Flex instance. This ensures that the Salesforce and Flex accounts can be linked securely using a common SSO identity provider. Flex users will not be able to link Salesforce unless they are authenticated through SSO and users within the configured Salesforce Org. 
+- Flex [upgraded to React version ~16.13.1](https://www.twilio.com/docs/flex/developer/plugins/react-versions)
 - npm version 5.0.0 or later installed (type `npm -v` in your terminal to check)
 - Node.js version 12 or later installed (type `node -v` in your terminal to check)
 - [Twilio CLI](https://www.twilio.com/docs/twilio-cli/quickstart#install-twilio-cli) along with the [Flex CLI Plugin](https://www.twilio.com/docs/twilio-cli/plugins#available-plugins) and the [Serverless Plugin](https://www.twilio.com/docs/twilio-cli/plugins#available-plugins). Run the following commands to install them:
@@ -89,6 +90,7 @@ twilio api:sync:v1:services:create --friendly-name Salesforce --acl-enabled
     SFDC_ORG_ID=Your 18-character Salesforce Organization ID (e.g. 00A1a000001AaAaAAA)
     SFDC_CLIENT_ID=Your Salesforce Connected App OAuth Client ID
     SFDC_CLIENT_SECRET=Your Salesforce Connected App OAuth Client Secret
+    FLEX_INSTANCE_URL=https://flex.twilio.com, may be different if you self-host Flex
   ```
 
 5. Copy the `.env.example` file in the root directory:

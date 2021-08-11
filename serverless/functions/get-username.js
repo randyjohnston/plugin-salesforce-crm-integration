@@ -2,11 +2,10 @@ const TokenValidator = require('twilio-flex-token-validator').functionValidator;
 const jsforce = require('jsforce');
 
 exports.handler = TokenValidator(async function (context, event, callback) {
-
   const twilioClient = context.getTwilioClient();
 
   let response = new Twilio.Response();
-  response.appendHeader('Access-Control-Allow-Origin', '*');
+  response.appendHeader('Access-Control-Allow-Origin', context.FLEX_INSTANCE_URL);
   response.appendHeader('Access-Control-Allow-Methods', 'OPTIONS POST');
   response.appendHeader('Content-Type', 'application/json');
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -27,7 +26,6 @@ exports.handler = TokenValidator(async function (context, event, callback) {
     for Flex user ${event.TokenResult.realm_user_id}`);
   response.setBody({ 'sfdc_username': identityInfo.username });
   return callback(null, response);
-
 });
 
 const oauthHelper = async (event, context, twilioClient) => {
@@ -38,7 +36,7 @@ const oauthHelper = async (event, context, twilioClient) => {
   const oauth2 = new jsforce.OAuth2({
     clientId: context.SFDC_CLIENT_ID,
     clientSecret: context.SFDC_CLIENT_SECRET,
-    redirectUri: `https://${context.DOMAIN_NAME}/get-access-token`,
+    redirectUri: `${context.FLEX_INSTANCE_URL}/salesforce-oauth`
   });
 
   const connection = new jsforce.Connection(

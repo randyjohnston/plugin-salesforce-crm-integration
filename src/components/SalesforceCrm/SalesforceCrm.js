@@ -8,7 +8,7 @@ import {
   Header,
   HeaderLine,
 } from './SalesforceCrm.Styles';
-import OauthLoginButton from '../OauthLoginButton/OauthLoginButton';
+import OauthLogin from '../OauthLogin/OauthLogin';
 
 class SalesforceCrm extends React.Component {
 
@@ -84,13 +84,12 @@ class SalesforceCrm extends React.Component {
           {!this.props.sfdcUserLoggedIn
             && !(typeof this.props.sfdcUserLoggedIn == 'undefined')
             &&
-            <OauthLoginButton
+            <OauthLogin
+              manager={this.props.manager}
+              refreshSalesforceLogin={this.props.refreshSalesforceLogin}
               url={this.props.authUrl}
-              onClose={this.props.refreshSalesforceLogin}
-              width={500}
-              height={700}
             >Login
-            </OauthLoginButton>
+            </OauthLogin>
           }
         </ProfileCanvas>
       </CustomCRMContainer>
