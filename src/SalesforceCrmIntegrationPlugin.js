@@ -1,5 +1,5 @@
 import React from 'react';
-import { VERSION, SideLink, Actions } from '@twilio/flex-ui';
+import { VERSION } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
 import SalesforceCrmContainer from './components/SalesforceCrm/SalesforceCrmContainer'
 
