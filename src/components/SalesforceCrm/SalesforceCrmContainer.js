@@ -37,8 +37,7 @@ class SalesforceCrmContainer extends React.Component {
     }
   }
 
-  // retrieve data using the Twilio Function as a proxy
-  getCrmUser() {
+  getCrmUser(retries = 5, backoff = 500) {
     this.setState({
       sfdcUserName: this.loadingText,
     });
@@ -54,22 +53,23 @@ class SalesforceCrmContainer extends React.Component {
       .then((response) => {
         if (response.ok) {
           return response.json();
+        } else if (retries > 0 && (response.status === 429 || response.status >= 500)) {
+          console.warn('CRM user fetch rate limited or server error');
+          setTimeout(() => {
+            return this.getCrmUser(retries - 1, backoff * 2);
+          }, backoff);
         } else {
-          // throw an error if we received any error from the Function
-          console.error('CRM fetch failed, response:', response);
-          throw new Error('Failed to fetch from CRM');
+          console.error('CRM user fetch failed, response:', response);
+          throw new Error('Failed to fetch user from CRM');
         }
       })
       .then((data) => {
-        // save fetched user state in component's state
         this.setState({
           sfdcUserName: data.sfdc_username,
           sfdcUserLoggedIn: true
         });
       })
       .catch((error) => {
-        // handle errors received from the Function or thrown during the fetch
-        console.error('CRM request failed', error);
         this.setState({
           sfdcUserName: `No Salesforce authorization 
             (please login to Salesforce below)`,
@@ -78,7 +78,7 @@ class SalesforceCrmContainer extends React.Component {
       });
   }
 
-  getCrmData() {
+  getCrmData(retries = 3, backoff = 750) {
     let foundCachedRecord;
     const cacheingEnabled = JSON.parse(
       process.env.REACT_APP_REDUX_SFDC_CACHEING_ENABLED.toLowerCase()
@@ -127,14 +127,17 @@ class SalesforceCrmContainer extends React.Component {
         .then((response) => {
           if (response.ok) {
             return response.json();
+          } else if (retries > 0 && (response.status === 429 || response.status >= 500)) {
+            console.warn('CRM contact fetch rate limited or server error');
+            setTimeout(() => {
+              return this.getCrmData(retries - 1, backoff * 2);
+            }, backoff);
           } else {
-            // throw an error if we received any error from the Function
-            console.error('CRM fetch failed, response:', response);
-            throw new Error('Failed to fetch from CRM');
+            console.error('CRM contact fetch failed, response:', response);
+            throw new Error('Failed to fetch contact from CRM');
           }
         })
         .then((data) => {
-          // save fetched user state in component's state
           this.setState({
             matchingSfdcRecord: true,
             custRecord: {
@@ -152,8 +155,6 @@ class SalesforceCrmContainer extends React.Component {
           this.props.addRecord(this.state.custRecord);
         })
         .catch((error) => {
-          // handle errors received from the Function or thrown during the fetch
-          console.error('CRM request failed', error);
           this.setState({
             matchingSfdcRecord: false,
             custRecord: {
