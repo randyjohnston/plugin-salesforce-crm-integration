@@ -14,17 +14,18 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   response.appendHeader('Content-Type', 'application/json');
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  let refreshedToken = false;
   const connection = await oauthHelper(event, context, twilioClient);
+  const identityInfo = await validateSalesforceFlexIdentitiesMatch(connection, event);
 
-  connection.on("refresh", function (accessToken, res) {
+  let refreshedToken = false;
+  connection.on("refresh", () => {
     refreshedToken = true;
   });
 
   const sfdcRecords = await sfdcQuery(event, connection, response, callback);
 
   if (refreshedToken) {
-    await refreshToken(twilioClient, context, connection, response);
+    await refreshToken(twilioClient, context, connection, identityInfo, response);
   }
 
   if (sfdcRecords.length !== 1) {
@@ -73,6 +74,23 @@ const oauthHelper = async (event, context, twilioClient) => {
   console.log(`Established SFDC query connection for ${event.TokenResult.realm_user_id}`);
 
   return connection;
+}
+
+const validateSalesforceFlexIdentitiesMatch = async (connection, event) => {
+  const identityInfo = await connection.identity();
+  if (identityInfo.username === event.TokenResult.realm_user_id) {
+    console.log(
+      `Salesforce login ${identityInfo.username} matches Flex login ${event.TokenResult.realm_user_id}`
+    );
+    return identityInfo;
+  } else {
+    console.error(
+      `Flex user ${event.TokenResult.realm_user_id} logged into SFDC as ${identityInfo.username}`
+    );
+    response.setBody('Authorization failed');
+    response.setStatusCode(403);
+    return callback(null, response);
+  }
 }
 
 const sfdcQuery = async (event, connection, response, callback) => {

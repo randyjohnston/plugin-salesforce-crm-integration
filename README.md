@@ -43,7 +43,7 @@ To deploy this plugin, you will need:
 
 ## Salesforce Connected App
 
-Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) under Salesforce Setup > App Maanger > New Connected App with at least `Access and manage your data (api)` and `Perform requests on your behalf at any time (refresh_token, offline_access)` OAuth scope. The Callback URL will be configured later after the Twilio Function has been deployed. 
+Create a [Salesforce Connected App](https://help.salesforce.com/articleView?id=sf.connected_app_create_basics.htm) under Salesforce Setup > App Maanger > New Connected App with at least `Access and manage your data (api)` and `Perform requests on your behalf at any time (refresh_token, offline_access)` OAuth scope. The Callback URL will be `https://flex.twilio.com/salesforce-oauth` unless your Flex instance is self-hosted, in which case the base path may differ.
 
 <img width="840px" src="resources/salesforce-connected-app.png"/>
 
@@ -131,8 +131,6 @@ When you are ready to deploy your plugin, first deploy your Twilio Functions:
 twilio serverless:deploy
 ```
 
-*Note: Record the Function URL with path ending in `/get-access-token`, as this will be configured in Salesforce as the OAuth Callback URL. 
-
 Then deploy your Flex Plugins
 
 ```bash
@@ -140,11 +138,6 @@ twilio flex:plugins:deploy --major --changelog "Notes for this version" --descri
 ```
 
 For more details on deploying your plugin, refer to the [deploying your plugin guide](https://www.twilio.com/docs/flex/plugins#deploying-your-plugin).
-
-
-## Configure Salesforce Callback URL
-
-Once your Twilio Functions have deployed, configure the Salesforce Callback URL under Salesforce Setup > App Maanger > New Connected App. This URL will be in the format of `https://functions-0000-dev.twil.io/get-access-token`.
 
 ## Limitations and Scaling the Plugin
 
