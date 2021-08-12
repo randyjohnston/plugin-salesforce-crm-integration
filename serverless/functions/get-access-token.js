@@ -34,11 +34,12 @@ exports.handler = TokenValidator(async function (context, event, callback) {
       return callback(null, response);
     }
     // Get user identity for SF access token - check that Flex and SF users match
-    const identityInfo = await refreshToken(twilioClient, context, connection, response);
+    const identityInfo = await connection.identity();
     if (identityInfo.username === event.TokenResult.realm_user_id) {
       console.log(
         `Salesforce login ${identityInfo.username} matches Flex login ${event.TokenResult.realm_user_id}`
       );
+      await refreshToken(twilioClient, context, connection, identityInfo, response);
       response.setBody(`Successfully linked Flex to Salesforce for ${identityInfo.username}.`);
       return callback(null, response);
     } else {

@@ -1,6 +1,6 @@
 const jsforce = require('jsforce');
 
-exports.handler = function (context, callback) {
+exports.handler = function (context, event, callback) {
   let response = new Twilio.Response();
 
   response.appendHeader('Access-Control-Allow-Origin', context.FLEX_INSTANCE_URL);
