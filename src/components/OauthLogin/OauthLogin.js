@@ -46,7 +46,7 @@ export default class OauthLogin extends React.Component {
                 } else if (retries > 0 && (response.status === 429 || response.status >= 500)) {
                     console.warn('CRM auth code exchange fetch rate limited or server error');
                     setTimeout(() => {
-                        return this.getCrmUser(retries - 1, backoff * 2);
+                        return this.exchangeAuthCode(retries - 1, backoff * 2);
                     }, backoff);
                 } else {
                     console.error('CRM auth code exchange fetch failed, response:', response);
