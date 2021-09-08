@@ -1,12 +1,16 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-console */
 import React from 'react';
 import { withTaskContext } from '@twilio/flex-ui';
-import SalesforceCrm from './SalesforceCrm';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { bindActionCreators } from 'redux';
+
+import SalesforceCrm from './SalesforceCrm';
 import { Actions } from '../../states/SalesforceCrmState';
 
 class SalesforceCrmContainer extends React.Component {
-
   constructor(props) {
     super(props);
     this.authUrl = `https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/auth`;
@@ -27,9 +31,9 @@ class SalesforceCrmContainer extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      (this.props.task !== prevProps.task || this.state.sfdcUserLoggedIn != prevState.sfdcUserLoggedIn)
-      && this.props.task?.attributes?.name
-      && this.state.sfdcUserLoggedIn
+      (this.props.task !== prevProps.task || this.state.sfdcUserLoggedIn !== prevState.sfdcUserLoggedIn) &&
+      this.props.task?.attributes?.name &&
+      this.state.sfdcUserLoggedIn
     ) {
       this.getCrmData();
     }
@@ -42,11 +46,11 @@ class SalesforceCrmContainer extends React.Component {
     fetch(`https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/get-username`, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
-        Token: this.props.manager.user.token
-      })
+        Token: this.props.manager.user.token,
+      }),
     })
       .then((response) => {
         if (response.ok) {
@@ -64,40 +68,37 @@ class SalesforceCrmContainer extends React.Component {
       .then((data) => {
         this.setState({
           sfdcUserName: data.sfdc_username,
-          sfdcUserLoggedIn: true
+          sfdcUserLoggedIn: true,
         });
       })
       .catch((error) => {
         this.setState({
           sfdcUserName: `No Salesforce authorization 
             (please login to Salesforce below)`,
-          sfdcUserLoggedIn: false
+          sfdcUserLoggedIn: false,
         });
       });
   }
 
   getCrmData(retries = 3, backoff = 750) {
     let foundCachedRecord;
-    const cacheingEnabled = JSON.parse(
-      process.env.REACT_APP_REDUX_SFDC_CACHEING_ENABLED.toLowerCase()
-    );
+    const cacheingEnabled = JSON.parse(process.env.REACT_APP_REDUX_SFDC_CACHEING_ENABLED.toLowerCase());
     if (cacheingEnabled) {
       foundCachedRecord = this.props.sfdcRecords.find(
-        sfdcRecord => sfdcRecord.custPhone === this.props.task.attributes.name
+        (sfdcRecord) => sfdcRecord.custPhone === this.props.task.attributes.name,
       );
     }
     if (cacheingEnabled && foundCachedRecord && foundCachedRecord.custName) {
       this.setState({
         matchingSfdcRecord: true,
-        custRecord: foundCachedRecord
-      })
+        custRecord: foundCachedRecord,
+      });
     } else if (cacheingEnabled && foundCachedRecord && !foundCachedRecord.custName) {
       this.setState({
         matchingSfdcRecord: false,
-        custRecord: foundCachedRecord
-      })
-    }
-    else {
+        custRecord: foundCachedRecord,
+      });
+    } else {
       this.setState({
         matchingSfdcRecord: true,
         custRecord: {
@@ -108,19 +109,19 @@ class SalesforceCrmContainer extends React.Component {
           custAcctType: this.loadingText,
           custAcctNum: this.loadingText,
           custAcctSla: this.loadingText,
-          custAcctPriority: this.loadingText
-        }
+          custAcctPriority: this.loadingText,
+        },
       });
       fetch(`https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/get-contact-account-data`, {
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         body: JSON.stringify({
           phone: this.props.task.attributes.name,
           country: this.props.task.attributes.caller_country,
-          Token: this.props.manager.user.token
-        })
+          Token: this.props.manager.user.token,
+        }),
       })
         .then((response) => {
           if (response.ok) {
@@ -147,8 +148,8 @@ class SalesforceCrmContainer extends React.Component {
               custAcctType: data.cust_acct_type,
               custAcctNum: data.cust_acct_num,
               custAcctSla: data.cust_acct_sla,
-              custAcctPriority: data.cust_acct_priority
-            }
+              custAcctPriority: data.cust_acct_priority,
+            },
           });
           this.props.addRecord(this.state.custRecord);
         })
@@ -164,8 +165,8 @@ class SalesforceCrmContainer extends React.Component {
               custAcctType: null,
               custAcctNum: null,
               custAcctSla: null,
-              custAcctPriority: null
-            }
+              custAcctPriority: null,
+            },
           });
           this.props.addRecord(this.state.custRecord);
         });
@@ -174,7 +175,7 @@ class SalesforceCrmContainer extends React.Component {
 
   setUserLoggingIn() {
     this.setState({
-      sfdcUserLoggedIn: undefined
+      sfdcUserLoggedIn: undefined,
     });
   }
 
@@ -183,20 +184,21 @@ class SalesforceCrmContainer extends React.Component {
   }
 
   render() {
-    return <SalesforceCrm
-      manager={this.props.manager}
-      sfdcUserLoggedIn={this.state.sfdcUserLoggedIn}
-      setUserLoggingIn={this.setUserLoggingIn}
-      refreshSalesforceLogin={this.refreshSalesforceLogin}
-      sfdcUserName={this.state.sfdcUserName}
-      matchingSfdcRecord={this.state.matchingSfdcRecord}
-      custRecord={this.state.custRecord}
-      authUrl={this.authUrl}
-      task={this.props.task}
-      loadingText={this.loadingText}
-    />
+    return (
+      <SalesforceCrm
+        manager={this.props.manager}
+        sfdcUserLoggedIn={this.state.sfdcUserLoggedIn}
+        setUserLoggingIn={this.setUserLoggingIn}
+        refreshSalesforceLogin={this.refreshSalesforceLogin}
+        sfdcUserName={this.state.sfdcUserName}
+        matchingSfdcRecord={this.state.matchingSfdcRecord}
+        custRecord={this.state.custRecord}
+        authUrl={this.authUrl}
+        task={this.props.task}
+        loadingText={this.loadingText}
+      />
+    );
   }
-
 }
 
 // Define mapping functions

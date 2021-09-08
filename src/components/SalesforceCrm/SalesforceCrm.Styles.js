@@ -4,8 +4,7 @@ export const CustomCRMContainer = styled('div')`
   text-align: center;
   display: flex;
   flex: 1 1;
-  border-left: 1px solid
-    ${(props) => props.theme.AgentDesktopView.ContentSplitter.borderColor};
+  border-left: 1px solid ${(props) => props.theme.AgentDesktopView.ContentSplitter.borderColor};
   background-color: ${(props) => props.theme.TaskCanvas.Container.background};
 `;
 

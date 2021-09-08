@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 const jsforce = require('jsforce');
 
+// eslint-disable-next-line func-names
 exports.handler = function (context, event, callback) {
-  let response = new Twilio.Response();
+  const response = new Twilio.Response();
 
   response.appendHeader('Access-Control-Allow-Origin', context.FLEX_INSTANCE_URL);
   response.appendHeader('Access-Control-Allow-Methods', 'GET');
@@ -10,8 +12,8 @@ exports.handler = function (context, event, callback) {
   const oauth2 = new jsforce.OAuth2({
     clientId: context.SFDC_CLIENT_ID,
     clientSecret: context.SFDC_CLIENT_SECRET,
-    redirectUri: `${context.FLEX_INSTANCE_URL}/salesforce-oauth`
-  })
+    redirectUri: `${context.FLEX_INSTANCE_URL}/salesforce-oauth`,
+  });
   const authUrl = oauth2.getAuthorizationUrl({});
   console.log(`Auth endpoint called, redirecting user to ${authUrl}`);
   response.setStatusCode(301);

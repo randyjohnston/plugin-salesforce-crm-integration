@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { VERSION } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
-import SalesforceCrmContainer from './components/SalesforceCrm/SalesforceCrmContainer'
 
+import SalesforceCrmContainer from './components/SalesforceCrm/SalesforceCrmContainer';
 import reducers, { namespace } from './states';
 
 const PLUGIN_NAME = 'SalesforceCrmIntegrationPlugin';
@@ -24,13 +26,9 @@ export default class SalesforceCrmIntegrationPlugin extends FlexPlugin {
 
     flex.AgentDesktopView.Panel2.Content.remove('container');
 
-    flex.AgentDesktopView.Panel2.Content.add(
-      <SalesforceCrmContainer key="salesforce" manager={manager} />
-    );
+    flex.AgentDesktopView.Panel2.Content.add(<SalesforceCrmContainer key="salesforce" manager={manager} />);
 
-    flex.ViewCollection.Content.add(
-      <flex.View name="salesforce-oauth" key="salesforce-oauth" />
-    );
+    flex.ViewCollection.Content.add(<flex.View name="salesforce-oauth" key="salesforce-oauth" />);
   }
 
   /**

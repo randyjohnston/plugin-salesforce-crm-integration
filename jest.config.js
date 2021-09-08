@@ -5,4 +5,4 @@ module.exports = (config, { isProd, isDev, isTest }) => {
    */
 
   return config;
-}
+};

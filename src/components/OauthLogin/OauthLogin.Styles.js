@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import styled from 'react-emotion';
 
 export const Button = styled('div')`
@@ -15,7 +16,7 @@ export const Button = styled('div')`
   border-radius: 100px;
   color: rgb(255, 255, 255);
   text-transform: uppercase;
-  cursor:pointer;
+  cursor: pointer;
   &:hover {
     background-color: rgba(0, 0, 0, 0.2);
     background-blend-mode: color;
