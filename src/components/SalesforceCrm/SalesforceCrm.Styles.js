@@ -1,4 +1,4 @@
-import styled from 'react-emotion';
+import { styled } from '@twilio/flex-ui';
 
 export const CustomCRMContainer = styled('div')`
   text-align: center;
@@ -9,7 +9,7 @@ export const CustomCRMContainer = styled('div')`
 `;
 
 export const ProfileCanvas = styled('div')`
-  color: ${(props) => props.theme.calculated.textColor};
+  color: ${(props) => props.theme.tokens.textColors.colorText};
   align-items: center;
   display: flex;
   flex: 1 1 auto;
@@ -25,13 +25,13 @@ export const ProfileGrid = styled('div')`
 `;
 
 export const Label = styled('div')`
-  color: ${(props) => props.theme.colors.base7};
+  color: ${(props) => props.theme.tokens.textColors.colorText};
   letter-spacing: 2px;
   margin: 10px 12px 4px;
 `;
 
 export const Value = styled('div')`
-  color: ${(props) => props.theme.colors.base8};
+  color: ${(props) => props.theme.tokens.textColors.colorText}};
 `;
 
 export const Header = styled('div')`
@@ -48,6 +48,6 @@ export const Header = styled('div')`
 export const HeaderLine = styled('div')`
   border-style: solid;
   border-width: 0px 0px 4px;
-  border-color: ${(props) => props.theme.colors.flexBlueColor};
+  border-color: '#1976D2';
   margin: 0 0 20px;
 `;
