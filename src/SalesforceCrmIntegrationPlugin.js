@@ -9,6 +9,7 @@ import reducers, { namespace } from './states';
 
 const PLUGIN_NAME = 'SalesforceCrmIntegrationPlugin';
 
+// eslint-disable-next-line import/no-unused-modules
 export default class SalesforceCrmIntegrationPlugin extends FlexPlugin {
   constructor() {
     super(PLUGIN_NAME);

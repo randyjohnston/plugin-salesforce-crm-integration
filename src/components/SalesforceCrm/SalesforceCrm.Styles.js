@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unused-modules */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import styled from 'react-emotion';
 
 export const CustomCRMContainer = styled('div')`
