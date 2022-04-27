@@ -18,7 +18,7 @@
     "@twilio/flex-ui": "^1",
     "eslint": "^8.6.0",
     "eslint-config-twilio": "^2.0.0",
-    "react-test-renderer": "~16.13.1"
+    "react-test-renderer": "~18.1.0"
   },
   "eslintConfig": {
     "extends": [
