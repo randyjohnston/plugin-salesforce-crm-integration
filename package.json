@@ -15,7 +15,7 @@
     "react-oauth-popup": "~1.0.5"
   },
   "devDependencies": {
-    "@twilio/flex-ui": "^1",
+    "@twilio/flex-ui": "^2",
     "eslint": "^8.6.0",
     "eslint-config-twilio": "^2.0.0",
     "react-test-renderer": "~16.13.1"
